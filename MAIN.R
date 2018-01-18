@@ -9,6 +9,7 @@ require(RColorBrewer)
 ########################   Parameter definition    #############################
 ################################################################################
 
+# trying git by adding this here comment
 
 ########################################
 ## Population parameters
