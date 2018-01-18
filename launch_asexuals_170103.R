@@ -8,11 +8,11 @@ source("master.R")
 
 master <- cmpfun(master)
 
-source("initialization.R")
+source("genesis.R")
 
 genesis <- cmpfun(genesis)
 
-source("competition")
+source("competition.R")
 
 competition <- cmpfun(competition)
 
