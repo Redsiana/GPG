@@ -1,4 +1,3 @@
-
 master <- function( s, 
                     K, 
                     fec,
@@ -290,13 +289,10 @@ master <- function( s,
  
  
  
- 
- 
- 
- 
- 
- 
+
  
   rm( list = setdiff( ls(), lsf.str() ) ) # removes all variables but functions
 }
 
+library(compiler)
+cmpfun(master)
