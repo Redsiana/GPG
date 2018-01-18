@@ -16,7 +16,7 @@ x <- runif(nsamples, min = 0.5, max = 1)
 Gamma <- function(a, z) pgamma(z, a, lower = FALSE) * gamma(a) # define the same incomplete gamma function as Mathematica, which is gamma(a) from z to infinity
 f2 <- function(x, u) 1 - ( x* (abs(x/a)^.c) ^(-1/.c) * Gamma( 1/.c , abs(x/a)^.c ) ) / ( 2*a*gamma(1/.c) ) - u
 my.uniroot2 <- function(x) uniroot(f2, interval = c(0.000001, 500), u = x, tol = 0.0001)$root
-.dispkernel <- vapply(x, my.uniroot2, numeric(1))
+.dispkernel <- dispkernel <- vapply(x, my.uniroot2, numeric(1))
 
 
 
