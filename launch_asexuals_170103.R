@@ -4,47 +4,38 @@ library(compiler)
 
 
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/master_asexuals_ded_171120.R")
+source("master.R")
 
 master <- cmpfun(master)
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/initialization_asexuals_171120.R")
+source("initialization.R")
 
 genesis <- cmpfun(genesis)
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/competition_170103.R")
+source("competition")
 
-dogeatdog <- cmpfun(dogeatdog)
+competition <- cmpfun(competition)
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/faircompet_170103.R")
-
-faircompetition <- cmpfun(faircompetition)
-
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/diaspora_customkernel_asexuals_170103.R")
+source("diaspora.R")
 
 diaspora <- cmpfun(diaspora)
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/meetic_asexuals_171120.R")
+source("meetic.R")
 
 meetic <- cmpfun(meetic)
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/stillborns_asexuals_171120.R")
+source("stillborns.R")
 
 stillborn <- cmpfun(stillborn)
 
-source("D:/Kokkonuts/Where sex/modelling/nouvelle geographie/plotdensity_asexuals.R")
+source("plotdensity_asexuals.R")
 
 plotdensity <- cmpfun(plotdensity)
 
-source("D:/Kokkonuts/Where sex/modelling/hexagonal grid/plottruc.R")
+source("plottruc.R")
 
 plottruc <- cmpfun(plottruc)
 
-source("D:/Kokkonuts/Where sex/modelling/hexagonal grid/plotGRbabies.R")
+source("plotGRbabies.R")
 
 plotGR <- cmpfun(plotGR)
-
-
-competition <- dogeatdog
-# competition <- faircompetition
- 
