@@ -71,9 +71,15 @@ master <- function( s,
   # number of asexuals ever to arise through mutation
   count <- 0
   
+  # count to attribute colors to clones in the plotting of cloneposition
+  count_col <- 1
+  old_clones_colors = NA
+  old_clones_names = NA
+  
   ######### --- enter loop --- ########
   
   for ( t in 1: tps ){
+    bug = 0
     
     # 0. Initial dispersal
     # 
@@ -90,6 +96,7 @@ master <- function( s,
     coordalive <- TEMP$coordalive
     haspartner <- TEMP$haspartner
     
+    bug = 1
     
     # 1. Competition
     # 
@@ -117,6 +124,7 @@ master <- function( s,
     xmax_t <- xmax_t - 1
     }
     
+    bug = 2
     
     # 2. Reproduction: Allee effects and offspring production - meetic
     # 
@@ -140,6 +148,8 @@ master <- function( s,
     babycloneline <- TEMP$babycloneline
     babyclonalorigin <- TEMP$babyclonalorigin
     
+    bug = 3
+    
     # 4. Survival of inbreeding to juvenile stage - stillbornn
     # 
     # input: babygenome, babysex, babyX, babyY
@@ -162,7 +172,7 @@ master <- function( s,
     repro <- TEMP$newbabyrepro
     
     
-
+    bug = 4
     
     
     # Plot density of total, and asexual populations.
@@ -178,8 +188,20 @@ master <- function( s,
     #                     plotname = 'Density per patch' ) )
     # ani.record()
     # 
-    
-      source("analysis_cloneposition.R", local = TRUE)
+      TEMP <- analysis_cloneposition( popcloneline = popcloneline, 
+                              popclonalorigin = popclonalorigin, 
+                              newbabyX = newbabyX, 
+                              namerun = namerun, 
+                              t = t,
+                              old_clones_names = old_clones_names,
+                              old_clones_colors = old_clones_colors,
+                              count_col = count_col)
+      
+      count_col <- TEMP$count_col
+      old_clones_colors <- TEMP$main_clones_colors
+      old_clones_names <- TEMP$main_clones_names
+      
+      # source("analysis_cloneposition.R", local = TRUE)
     
     }
     
@@ -200,6 +222,8 @@ master <- function( s,
     } 
     
     ######### --- loop --- ########
+    
+    bug = 5
     
     print( paste( run, ':', t ) )
     
