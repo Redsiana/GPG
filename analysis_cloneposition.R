@@ -1,6 +1,6 @@
 #### invectigate clone identity, who is the most common, when did she originate
 ## and where
-## watch out: popX is taken now after dispersal, before survival
+## watch out: newbabyX is taken before dispersal, after survival
 
 library(ggplot2)
 library(RColorBrewer)
@@ -9,11 +9,11 @@ library(RColorBrewer)
 
 
 
-sorted_clone_prevalence <- sort( table(popcloneline)[-1])# gives table with clone number and number of individuals
+sorted_clone_prevalence <- sort( table(popcloneline)[-1]) # gives table with clone number and number of individuals
 main_clones_names <- as.numeric( names( tail(sorted_clone_prevalence, 5) ))
 
-clone_bars <- as.numeric( table(popX[ !(popcloneline %in% c(0,main_clones_names)) ]) )
-clone_patches <- as.numeric( names( table(popX[ !(popcloneline %in% c(0,main_clones_names)) ])) )
+clone_bars <- as.numeric( table(newbabyX[ !(popcloneline %in% c(0,main_clones_names)) ]) )
+clone_patches <- as.numeric( names( table(newbabyX[ !(popcloneline %in% c(0,main_clones_names)) ])) )
 clone_idcol <- as.factor( rep( "other cl", length(clone_bars)) )
 df <- data.frame(x = clone_patches, y = clone_bars, fac = clone_idcol )
 
@@ -23,8 +23,8 @@ g_edge <- numeric(length = length(main_clones_names))
 label_clone <- numeric(length = length(main_clones_names))
 
 for(clone in 1:length(main_clones_names)){
-  clone_bars <- as.numeric( table(popX[ popcloneline == main_clones_names[clone]]) )
-  clone_patches <- as.numeric( names( table(popX[ popcloneline == main_clones_names[clone]])) )
+  clone_bars <- as.numeric( table(newbabyX[ popcloneline == main_clones_names[clone]]) )
+  clone_patches <- as.numeric( names( table(newbabyX[ popcloneline == main_clones_names[clone]])) )
   clone_idcol <- as.factor( rep( main_clones_names[clone], length(clone_bars)) )
   df <- rbind(df, data.frame(x = clone_patches, y = clone_bars, fac = clone_idcol ))
 
@@ -34,8 +34,8 @@ for(clone in 1:length(main_clones_names)){
   label_clone[clone] <- paste(g_emergence[clone], ":", x_emergence[clone], '-', g_edge[clone])
 }
 
-sexual_bars <- as.numeric( table(popX[ popcloneline == 0]) )
-sexual_patches <- as.numeric( names( table(popX[ popcloneline == 0])) )
+sexual_bars <- as.numeric( table(newbabyX[ popcloneline == 0]) )
+sexual_patches <- as.numeric( names( table(newbabyX[ popcloneline == 0])) )
 sexual_idcol <- rep("sex", length(sexual_bars))
 df <- rbind( df, data.frame(x = sexual_patches, y = sexual_bars, fac = sexual_idcol ) )
 
@@ -63,19 +63,19 @@ ggsave(filename = paste(namerun,t, ".jpg", sep=""))
 
 
 
-# table(popX[ popcloneline == 41])
+# table(newbabyX[ popcloneline == 41])
 # 
 # unique( popclonalorigin[popcloneline==126,] ) # emerged on 1. km 15 at 2. generation 9
 # EDGE_t[9] # it's 14, so the clone arose beyond the edge
 # 
-# hist( popX[ popcloneline == 126], breaks=100 )
+# hist( newbabyX[ popcloneline == 126], breaks=100 )
 # abline(v = 15, col="red") # it ran off! but didn't go back
 # 
 # 
 # unique( popclonalorigin[popcloneline==92,] ) # emerged on km 9 at generaion 6
 # EDGE_t[6] # it's 11, so the clone arose beyond the edge
 # 
-# hist( popX[ popcloneline == 92], breaks=100 )
+# hist( newbabyX[ popcloneline == 92], breaks=100 )
 # abline(v = 16) # it progressed, and went back!
 # 
-# hist( popX[ popcloneline == 0] , xlim=c(0,75))
+# hist( newbabyX[ popcloneline == 0] , xlim=c(0,75))
