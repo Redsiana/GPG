@@ -18,7 +18,7 @@ analysis_cloneposition <- function(popcloneline,
                                    count_col){
   
   sorted_clone_prevalence <- sort( table(popcloneline)[-1]) # gives table with clone number and number of individuals (without sexuals)
-  main_clones_names <- as.numeric( names( tail(sorted_clone_prevalence, 5) ))
+  main_clones_names <- sort( as.numeric( names( tail(sorted_clone_prevalence, 5) )) )
   
   clone_bars <- as.numeric( table(newbabyX[ !(popcloneline %in% c(0,main_clones_names)) ]) ) # clones that are not the main ones
   clone_patches <- as.numeric( names( table(newbabyX[ !(popcloneline %in% c(0,main_clones_names)) ])) )
@@ -47,9 +47,8 @@ analysis_cloneposition <- function(popcloneline,
   sexual_idcol <- rep("sex", length(sexual_bars))
   df <- rbind( df, data.frame(x = sexual_patches, y = sexual_bars, fac = sexual_idcol ) )
   
-  
-  
   # this df has 3 columns, the X-coordinates, the number of individuals, the identity (5 main clones, other cl or sex)
+  
   # mypalette <- c( brewer.pal((length(main_clones_names)+1),  "YlOrRd"), "black" )
   # mypalette <- c( rainbow(12)[1:(length(main_clones_names)+1)], "black")
   pool_colors <- brewer.pal(11,  "RdYlGn")
@@ -72,7 +71,7 @@ analysis_cloneposition <- function(popcloneline,
   labels_plot <- c("other cl", label_clone, "sex")
   
   ggplot(data=df, aes(x=x, y=y, fill=fac, order=fac)) +
-    geom_bar(stat="identity" ) +   theme_minimal() +
+    geom_bar(stat="identity") +   theme_minimal() +
     scale_x_continuous(limits=c(0,200)) +
     scale_y_continuous(limits=c(0,600)) +
     scale_fill_manual(values= mypalette, labels = labels_plot) +
