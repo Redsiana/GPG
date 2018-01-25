@@ -1,3 +1,32 @@
+
+plot(EDGE_t, type='l', col="green", main = "temporal dynamics")
+abline(h=10, col="grey")
+lines(pureness_sex_t*10, col="red")
+points(EDGE_sex_t)
+abline(v=max( which(EDGE_sex_t==max(EDGE_sex_t))) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############# OLD ANALYSIS - LOTS OF STUFF TO RECOVER
+
 .K = 20
 .fec = 6
 .fecasex = 3

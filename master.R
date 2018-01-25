@@ -40,7 +40,8 @@ master <- function( s,
   INVASION_tot <- numeric( length = tps ) # pop size gathered once adults have settled and survived competition, before reproduction
   INVASION_asex <- numeric( length = tps )
   EDGE_t <- numeric( length = tps ) # position of the pop edge in time (defined as the X coordinates where all Y patches contain individuals)
-  
+  EDGE_sex_t <- numeric( length = tps)
+  pureness_sex_t <- numeric( length = tps)
   
   # Initialization
   
@@ -110,19 +111,9 @@ master <- function( s,
                                 popgenome = popgenome, K = K, G = G)
     
 
-    # numer of patches with surviving individuals; and with more than half of their population asexual
-    INVASION_tot[ t ] <- length( unique( coordalive[ popsurvival == 1 ] ) )
-    temptable <- table( coordalive[ popsurvival == 1 ], 
-                        factor( repro[ popsurvival == 1 ], levels = c('a', 's') ) )
-    INVASION_asex[ t ] <- sum( temptable[,1]/temptable[,2] > .5 )
+
     
-    xmax_t <- max( popX[ popsurvival == 1 ] ) # the furthest point the pop reaches
-    while( EDGE_t[t] == 0 ){
-      if( length( unique( popY[ popsurvival == 1 ][ popX[ popsurvival == 1] == xmax_t ] )) == Ydim ){
-        EDGE_t[t] <- xmax_t
-      } 
-    xmax_t <- xmax_t - 1
-    }
+    
     
     bug = 2
     
@@ -200,13 +191,32 @@ master <- function( s,
       count_col <- TEMP$count_col
       old_clones_colors <- TEMP$main_clones_colors
       old_clones_names <- TEMP$main_clones_names
-      
-      # source("analysis_cloneposition.R", local = TRUE)
-    
     }
     
     
+    # numer of patches with surviving individuals; and with more than half of their population asexual
+    # INVASION_tot[ t ] <- length( unique( coordalive[ popsurvival == 1 ] ) )
+    # temptable <- table( coordalive[ popsurvival == 1 ], 
+    #                     factor( repro[ popsurvival == 1 ], levels = c('a', 's') ) )
+    # INVASION_asex[ t ] <- sum( temptable[,1]/temptable[,2] > .5 )
+    
+    xmax_t <- max( newbabyX ) # the furthest point the pop reaches
+    while( EDGE_t[t] == 0 ){ # selects as EDGE the farthest point when every one of the Y patches is colonized
+      if( length( unique( popY[ popsurvival == 1 ][ popX[ popsurvival == 1] == xmax_t ] )) == Ydim ){
+        EDGE_t[t] <- xmax_t
+      } 
+      xmax_t <- xmax_t - 1
+    }
+    
+    nb_sexuals <- sum(popcloneline == 0 )
+    # X coordinate before which 95% of the sexual population is
+    EDGE_sex_t[t] <- sort( newbabyX[ popcloneline == 0 ] )[ round(nb_sexuals*0.95) ]
+    # fraction of sexuals within this area (to know if there are clusters of asex)
+    pureness_sex_t[t] <- sum( newbabyX[popcloneline == 0 ] <= EDGE_sex_t[t] ) / 
+      sum( newbabyX <= EDGE_sex_t[t] )
 
+    
+    
     
     # Limit cases
     if( length( popXY ) == 0 | sum ( is.na(coordalive) ) == length(coordalive) ){
@@ -246,9 +256,14 @@ master <- function( s,
  # save( list = ls( all.names = TRUE ), file = backup, envir = environment() )
   
  
- 
- 
- source("analysis_cloneposition.R")
+ analysis_cloneposition( popcloneline = popcloneline, 
+                         popclonalorigin = popclonalorigin, 
+                         newbabyX = newbabyX, 
+                         namerun = namerun, 
+                         t = t,
+                         old_clones_names = old_clones_names,
+                         old_clones_colors = old_clones_colors,
+                         count_col = count_col)
  
 
  
