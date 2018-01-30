@@ -10,9 +10,6 @@ stillborn <- function( babygenome,
                        babysex, 
                        babyX, 
                        babyY, 
-                       B, 
-                       M, 
-                       Ka, 
                        bsline, 
                        pmut, 
                        babyrepro,
@@ -26,7 +23,9 @@ stillborn <- function( babygenome,
   heteroz <- apply( babygenome == 1, 1 , sum ) / G
   
   # each juvenile's survival probability to inbreeding depression
-  inbreeding <- Ka /( 1 + 1*exp( -B*(heteroz-M) )) + bsline
+  # inbreeding <- Ka /( 1 + 1*exp( -B*(heteroz-M) )) + bsline
+  inbreeding <- 1-(1-bsline)*((heteroz-1))^2
+  
   
   # each juvenile's actual survival
   babysurvival <- as.logical( mapply( FUN = rbinom, prob = inbreeding, size = 1, n = 1 ) )
@@ -57,4 +56,7 @@ stillborn <- function( babygenome,
                 newbabyclonalorigin = newbabyclonalorigin, count = count))
   
 }
+
+library(compiler)
+stillborn <- cmpfun(stillborn)
 

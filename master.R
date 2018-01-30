@@ -23,8 +23,7 @@ master <- function( s,
   
   namerun <- paste( .compet, "K", K, '_fs', fec, '_fa',
                     fecasex, '_', probamating,'_G', G, '_b',
-                    bsline, '_Ka', Ka, '_B', B,'M_', M,
-                    '_pm', pmut, '_c', .c, '_',run,'.RData',
+                    bsline, '_pm', pmut, '_d', .mean_distance, '_c', .c, '_',run,'.RData',
                     sep = "" )
   
   # gc() # clean unused memory
@@ -148,7 +147,7 @@ master <- function( s,
     # 
     
     TEMP <- stillborn( babygenome = babygenome, babysex = babysex, 
-                       babyX = babyX, babyY = babyY, B = B, M = M, Ka = Ka, 
+                       babyX = babyX, babyY = babyY,  
                        bsline = bsline, pmut = pmut, babyrepro = babyrepro, 
                        babycloneline = babycloneline, babyclonalorigin = babyclonalorigin,
                        count = count, G = G, t = t)
@@ -271,4 +270,4 @@ master <- function( s,
 }
 
 library(compiler)
-cmpfun(master)
+master <- cmpfun(master)
