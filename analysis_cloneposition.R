@@ -15,7 +15,8 @@ analysis_cloneposition <- function(popcloneline,
                                    t,
                                    old_clones_names,
                                    old_clones_colors,
-                                   count_col){
+                                   count_col,
+                                   EDGE_t){
   
   sorted_clone_prevalence <- sort( table(popcloneline)[-1]) # gives table with clone number and number of individuals (without sexuals)
   main_clones_names <- sort( as.numeric( names( tail(sorted_clone_prevalence, 5) )) )
@@ -90,7 +91,8 @@ analysis_cloneposition <- function(popcloneline,
   
 }
 
-
+library(compiler)
+analysis_clonepostition <- cmpfun(analysis_cloneposition)
 
 
 # table(newbabyX[ popcloneline == 41])

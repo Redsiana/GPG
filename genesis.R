@@ -52,4 +52,5 @@ genesis <- function(K,
 
 # to homogeneize initial conditions between trials, pop always start with exactly half males and half females, all heterozygous
 
-
+library(compiler)
+genesis <- cmpfun(genesis)

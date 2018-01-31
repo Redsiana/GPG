@@ -58,5 +58,8 @@ competition <- function( compet, coordalive, haspartner, popgenome, G , K){
 }
 
 
+library(compiler)
+competition <- cmpfun(competition)
+
 
 

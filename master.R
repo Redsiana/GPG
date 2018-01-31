@@ -1,5 +1,4 @@
-master <- function( s, 
-                    K, 
+master <- function( K, 
                     fec,
                     fecasex,
                     G,
@@ -16,7 +15,8 @@ master <- function( s,
                     pmut,
                     tps, 
                     run,
-                    compet
+                    compet,
+                    plot
                     )
   {
 
@@ -37,7 +37,7 @@ master <- function( s,
   # preparing data gathering
   
   INVASION_tot <- numeric( length = tps ) # pop size gathered once adults have settled and survived competition, before reproduction
-  INVASION_asex <- numeric( length = tps )
+  INVASION_sex <- numeric( length = tps )
   EDGE_t <- numeric( length = tps ) # position of the pop edge in time (defined as the X coordinates where all Y patches contain individuals)
   EDGE_sex_t <- numeric( length = tps)
   pureness_sex_t <- numeric( length = tps)
@@ -167,7 +167,7 @@ master <- function( s,
     
     # Plot density of total, and asexual populations.
     
-    if ( round( t/10 ) == t/10 ){
+    if ( plot == TRUE & round( t/10 ) == t/10 ){
     
     # popsize <- tapply( popsurvival, coordalive, sum )
     # asexpopsize <- tapply( popsurvival[ repro == "a"], coordalive[ repro == "a"], sum )
@@ -185,7 +185,8 @@ master <- function( s,
                               t = t,
                               old_clones_names = old_clones_names,
                               old_clones_colors = old_clones_colors,
-                              count_col = count_col)
+                              count_col = count_col, 
+                              EDGE_t = EDGE_t)
       
       count_col <- TEMP$count_col
       old_clones_colors <- TEMP$main_clones_colors
@@ -193,11 +194,9 @@ master <- function( s,
     }
     
     
-    # numer of patches with surviving individuals; and with more than half of their population asexual
-    # INVASION_tot[ t ] <- length( unique( coordalive[ popsurvival == 1 ] ) )
-    # temptable <- table( coordalive[ popsurvival == 1 ], 
-    #                     factor( repro[ popsurvival == 1 ], levels = c('a', 's') ) )
-    # INVASION_asex[ t ] <- sum( temptable[,1]/temptable[,2] > .5 )
+    # numer of individuals of either types
+    INVASION_tot[ t ] <- length( popcloneline )
+    INVASION_sex[ t ] <- sum( popcloneline == 0 )
     
     xmax_t <- max( newbabyX ) # the furthest point the pop reaches
     while( EDGE_t[t] == 0 ){ # selects as EDGE the farthest point when every one of the Y patches is colonized
@@ -223,12 +222,9 @@ master <- function( s,
       break
     } 
     if( sum( repro == "s" ) / sum( repro == "a") < 0.05 ){
-      popsurvival <- competition( compet = compet, 
-                                  haspartner = haspartner, 
-                                  coordalive = coordalive, popgenome = popgenome,
-                                  K = K, G = G)
       break
-    } 
+    }
+    if( EDGE_sex_t[t] == Xdim ) break
     
     ######### --- loop --- ########
     
@@ -241,7 +237,17 @@ master <- function( s,
     
   }
   
-  
+  res <- c(max(EDGE_sex_t), #                                 max X position attained by sexuals
+           max( which(EDGE_sex_t==max(EDGE_sex_t))), #        time when they attained it
+           pureness_sex_t[ mean(c( max(EDGE_sex_t), t)) ], #  pureness halfway between recession point and end simulation
+           max(INVASION_sex), #                               max number of sexuals attained in the pop
+           max( which(INVASION_sex==max(INVASION_sex))), #    time when they attain it
+           INVASION_tot[t], #                                 how many individuals when simulation ended
+           INVASION_sex[t], #                                 how many sexuals when simulation ended
+           EDGE_t[t], #                                       how far the entire pop was when simulation ended
+           EDGE_sex_t[t], #                                   how far the sexual pop was when simulation ended
+           t #                                                when the simulation ended
+           )
   
   
   # namerun <- paste( .vcompet[run], "K", .vK[run], '_fs', .vfec[run], '_fa',
@@ -262,11 +268,15 @@ master <- function( s,
                          t = t,
                          old_clones_names = old_clones_names,
                          old_clones_colors = old_clones_colors,
-                         count_col = count_col)
+                         count_col = count_col,
+                         EDGE_t = EDGE_t)
  
 
+ return(res = res)
  
-  rm( list = setdiff( ls(), lsf.str() ) ) # removes all variables but functions
+  # rm( list = setdiff( ls(), lsf.str() ) ) # removes all variables but functions
+  
+  
 }
 
 library(compiler)

@@ -39,15 +39,39 @@ dir.create( file.path( mainDir, subDir ), showWarnings = FALSE)
 
 setwd( file.path( mainDir, subDir ) )
 
+results <- data.frame(matrix(NA, nrow = 10, ncol = 21))
+colnames(results) <- c('compet',
+                       'K',
+                       'fs',
+                       'fa',
+                       'probamating',
+                       'G',
+                       'b',
+                       'pmut',
+                       'mean_dist',
+                       'c',
+                       'run',
+                       'max.X.sex', 
+                       'max.X.sex.t',
+                       'mix',
+                       'max.nb.sex',
+                       'max.nb.sex.t', 
+                       'nb.all.end',
+                       'nb.sex.end',
+                       'X.all.end',
+                       'X.sex.end',
+                       'end.t')
 
 
-
-
+.run=1
 
 for ( .run in 1:10 )
 {
-  master( s = .s, 
-          K = .K, 
+  
+  results[i,1:11] <- c(.compet, .K, .fec, .fecasex, .probamating, .G, .bsline, .pmut, .mean_distance, .c, .run) 
+
+  
+  res <- master(K = .K, 
           fec = .fec, 
           fecasex = .fecasex,
           G = .G, 
@@ -58,32 +82,13 @@ for ( .run in 1:10 )
           Xdim = .Xdim,
           Ydim = .Ydim,
           bsline = .bsline, 
-          Ka = .Ka,
-          B = .B,
-          M = .M,
           pmut = .pmut,
           tps = .tps,
           run = .run,
-          compet = .compet)
+          compet = .compet,
+          plot = .plot)
+  
+  results[i, 12:21] <- res
+  
   }
 
-saveVideo(expr=master( s = .s,
-                       K = .K, 
-                       fec = .fec, 
-                       fecasex = .fecasex,
-                       G = .G, 
-                       probamating = .probamating,
-                       dispkernel = .dispkernel,
-                       Xinit = .Xinit,
-                       Yinit = .Yinit,
-                       Xdim = .Xdim,
-                       Ydim = .Ydim,
-                       bsline = .bsline, 
-                       Ka = .Ka,
-                       B = .B,
-                       M = .M,
-                       pmut = .pmut,
-                       tps = .tps,
-                       run = run ), video.name = "animation.mp4", img.name = "Rplot",
-          ffmpeg = ani.options("ffmpeg"), other.opts = if (grepl("[.]mp4$",
-                                                                 video.name)) "-pix_fmt yuv420p")

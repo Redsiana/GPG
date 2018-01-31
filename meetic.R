@@ -43,6 +43,9 @@ meetic <- function( sex,
     pmating[is.na(pmating)] <- 0 # otherwise rbinom errors over the NA, see if can't code them as 0 from the start
   }
   
+  # selfer <- coordalive %in% colnames(m_per_patch)[m_per_patch==0]
+  # selfer <- selfer
+  
   # Only females get a 1 or 0 (so the vector is the size of the female pop), and males are picked by females randomly; saves some random draw for the males
   realized_mating <- mapply( FUN = rbinom, prob = pmating[ sex =="fem" & repro == "s" ], size = 1, n = 1 ) 
   if( sum(realized_mating) == 0 ) return( 'nomating')
@@ -119,3 +122,5 @@ meetic <- function( sex,
   
 }
 
+library(compiler)
+meetic <- cmpfun(meetic)

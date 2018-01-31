@@ -1,7 +1,8 @@
 rm(list=ls())
 
 library(compiler)
-
+library(ggplot2)
+library(RColorBrewer)
 
 
 source("master.R")

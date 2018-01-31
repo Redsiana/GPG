@@ -1,10 +1,12 @@
 
 plot(EDGE_t, type='l', col="green", main = "temporal dynamics")
+lines(INVASION_tot / (Ydim*K*fecasex))
 abline(h=10, col="grey")
 lines(pureness_sex_t*10, col="red")
 points(EDGE_sex_t)
+points(INVASION_asex/(Ydim*K*fecasex), col="blue")
 abline(v=max( which(EDGE_sex_t==max(EDGE_sex_t))) )
-
+abline(v=max( which(INVASION_asex==max(INVASION_asex))), col="blue" )
 
 
 
