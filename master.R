@@ -21,9 +21,9 @@ master <- function( K,
   {
 
   
-  namerun <- paste( .compet, "K", K, '_fs', fec, '_fa',
+  namerun <- paste( compet, "K", K, '_fs', fec, '_fa',
                     fecasex, '_', probamating,'_G', G, '_b',
-                    bsline, '_pm', pmut, '_d', .mean_distance, '_c', .c, '_',run,'.RData',
+                    bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'.RData',
                     sep = "" )
   
   # gc() # clean unused memory
