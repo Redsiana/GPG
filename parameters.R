@@ -60,7 +60,7 @@
 
 .seed = 42
 set.seed(.seed)
-n <- 500
+n <- .500
 vK <- sample( 5:40, n, replace=T)
 vfec <- sample( 3:10, n, replace=T)
 vdisadvantage <- sample( seq( 0.2, 0.8, 0.1 ), n, replace = T)

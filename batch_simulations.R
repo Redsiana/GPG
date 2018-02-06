@@ -11,7 +11,9 @@ source("master.R")
 source("genesis.R")
 source("diaspora.R")
 source("competition.R")
+source("meetic.R")
 source("stillborns.R")
+source("analysis_cloneposition.R")
 # 
 # ############ generate the distribution of dispersal distances
 # a <- .mean_distance / ( gamma( 2/.c ) / gamma( 1/.c ) )
@@ -62,7 +64,7 @@ dir.create( file.path( mainDir, subDir ), showWarnings = FALSE)
 setwd( file.path( mainDir, subDir ) )
 
 
-for ( .run in 1:n ) {
+for ( .run in 18:.n ) {
   
   compet <- .results$compet[.run]
   K  <- .results$K[.run]
@@ -83,11 +85,18 @@ for ( .run in 1:n ) {
     x <- runif(nsamples, min = 0.5, max = 1)
     Gamma <- function(a, z) pgamma(z, a, lower = FALSE) * gamma(a) # define the same incomplete gamma function as Mathematica, which is gamma(a) from z to infinity
     f2 <- function(x, u) 1 - ( x* (abs(x/a)^c) ^(-1/c) * Gamma( 1/c , abs(x/a)^c ) ) / ( 2*a*gamma(1/c) ) - u
-    my.uniroot2 <- function(x) uniroot(f2, interval = c(0.000001, 500), u = x, tol = 0.0001)$root
-    .dispkernel <- dispkernel <- vapply(x, my.uniroot2, numeric(1))
+    my.uniroot2 <- function(x) tryCatch( 
+      uniroot(f2, 
+              interval = c(0.000001, 500),
+              u = x, 
+              tol = 0.0001, 
+              extendInt = "yes" )$root,
+      error=function(e) NA)
+    # .dispkernel <- dispkernel <- vapply(x, my.uniroot2, numeric(1))
+    .dispkernel <- dispkernel <- na.omit( sapply(x, my.uniroot2) )
     
   } else {
-    
+    rm(dispkernel)
     if(  mean_distance != .results$mean_dist[.run-1] | c != .results$c[.run-1]  ){
       a <- mean_distance / ( gamma( 2/c ) / gamma( 1/c ) )
       
@@ -95,8 +104,16 @@ for ( .run in 1:n ) {
       x <- runif(nsamples, min = 0.5, max = 1)
       Gamma <- function(a, z) pgamma(z, a, lower = FALSE) * gamma(a) # define the same incomplete gamma function as Mathematica, which is gamma(a) from z to infinity
       f2 <- function(x, u) 1 - ( x* (abs(x/a)^c) ^(-1/c) * Gamma( 1/c , abs(x/a)^c ) ) / ( 2*a*gamma(1/c) ) - u
-      my.uniroot2 <- function(x) uniroot(f2, interval = c(0.000001, 500), u = x, tol = 0.0001)$root
-      .dispkernel <- dispkernel <- vapply(x, my.uniroot2, numeric(1))
+      my.uniroot2 <- function(x) tryCatch( 
+        uniroot(f2, 
+                interval = c(0.000001, 500),
+                u = x, 
+                tol = 0.0001, 
+                extendInt = "yes" )$root,
+        error=function(e) NA)
+      # .dispkernel <- dispkernel <- vapply(x, my.uniroot2, numeric(1))
+      .dispkernel <- dispkernel <- na.omit( sapply(x, my.uniroot2) )
+      
       }
   }
   
