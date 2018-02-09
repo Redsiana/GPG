@@ -64,7 +64,7 @@ dir.create( file.path( mainDir, subDir ), showWarnings = FALSE)
 setwd( file.path( mainDir, subDir ) )
 
 
-for ( .run in 18:.n ) {
+for ( .run in 1:.n ) {
   
   compet <- .results$compet[.run]
   K  <- .results$K[.run]
@@ -140,5 +140,7 @@ for ( .run in 18:.n ) {
   .results[.run, 22] <- seed
   
   rm(list = setdiff(ls(), lsf.str()))
+  write.table(.results, "results.txt")
+  
   }
 

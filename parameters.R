@@ -60,20 +60,21 @@
 
 .seed = 42
 set.seed(.seed)
-n <- .500
-vK <- sample( 5:40, n, replace=T)
-vfec <- sample( 3:10, n, replace=T)
-vdisadvantage <- sample( seq( 0.2, 0.8, 0.1 ), n, replace = T)
+.n <- 500
+vK <- sample( 5:40, .n, replace=T)
+vfec <- sample( 3:10, .n, replace=T)
+vdisadvantage <- sample( seq( 0.2, 0.8, 0.1 ), .n, replace = T)
 vfecasex <- round(vdisadvantage * vfec)
-vG <- sample( 2:20, n, replace=T)
-vprobamating <- rep( 1, n )
-vbsline <- sample( seq( 0.2,1, 0.1 ), n, replace=T)
-vpmut <- sample( c( 0.005, 0.0005, 0.00005 ), n, replace=T)
-vcompet <- sample(c( "_ded_", "_fc_" ), n, replace = T)
-vmean_distance <- sample( seq(0.5,3,0.1), n, replace = T) 
-vc <- sample( c(0.5, 0.8, 1, 1.2, 5), n, replace = T)
+vfecasex[vfecasex==1] <- 2
+vG <- sample( 2:20, .n, replace=T)
+vprobamating <- rep( 1, .n )
+vbsline <- sample( seq( 0.2,1, 0.1 ), .n, replace=T)
+vpmut <- sample( c( 0.005, 0.0005, 0.00005 ), .n, replace=T)
+vcompet <- sample(c( "_ded_", "_fc_" ), .n, replace = T)
+vmean_distance <- sample( seq(0.5,3,0.1), .n, replace = T) 
+vc <- sample( c(0.5, 0.8, 1, 1.2, 5), .n, replace = T)
 
-results <- data.frame(matrix(NA, nrow = n, ncol = 22))
+results <- data.frame(matrix(NA, nrow = .n, ncol = 22))
 colnames(results) <- c('compet',
                        'K',
                        'fs',
@@ -98,7 +99,7 @@ colnames(results) <- c('compet',
                        'seed')
 
 results[,2:11] <- cbind( vK, vfec, vfecasex, vprobamating, vG, vbsline,
-                        vpmut, vmean_distance, vc, 1:n)
+                        vpmut, vmean_distance, vc, 1:.n)
 results[,1] <- vcompet
 .results <- results[
   with(results, order(vmean_distance, vc)),
