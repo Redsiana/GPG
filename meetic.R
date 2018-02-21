@@ -23,31 +23,36 @@ meetic <- function( sex,
   
   ## mate-finding Allee-effect
   
+ 
+  
   if( sum( sex[popsurvival==1]=='mal' ) == 0 ) return( 'nomales' )
   
   # table of number of males per patch
   m_per_patch <- table( sex[popsurvival==1], coordalive[popsurvival==1])['mal', , drop=F] 
   if ( length( m_per_patch ) == 1) names(m_per_patch) <- unique( coordalive[popsurvival==1 & sex=='mal'] )
   
-  if ( is.numeric(probamating) ) {
-    pmating <- probamating * popsurvival
-    pmating[ coordalive %in% colnames(m_per_patch)[m_per_patch==0] ] <- 0 # only females with males on their patch have pmating, otherwise 0
-  }
-  if ( probamating == "allee") {
-    if ( missing('theta') ) {
-      theta <- 3 / ( 0.5 * K ) # this theta gives such a curve for mating probability:
-      # curve(expr= 1 - exp ( - 6 * x ), from=0, to=1, xlab='percent of K that are males', ylab='female mating proba')
-    }
-    pmating <-  (1 - exp ( - theta * m_per_patch[popXY] )) 
-    pmating <- pmating * popsurvival # removing the females that didn't survive the competition earlier
-    pmating[is.na(pmating)] <- 0 # otherwise rbinom errors over the NA, see if can't code them as 0 from the start
-  }
+
+  # if ( is.numeric(probamating) ) {
+  pmating <- probamating * popsurvival
+  pmating[ coordalive %in% colnames(m_per_patch)[m_per_patch==0] ] <- 0 # only females with males on their patch have pmating, otherwise 0
+  # }
+  # if ( probamating == "allee") {
+  #   if ( missing('theta') ) {
+  #     theta <- 3 / ( 0.5 * K ) # this theta gives such a curve for mating probability:
+  #     # curve(expr= 1 - exp ( - 6 * x ), from=0, to=1, xlab='percent of K that are males', ylab='female mating proba')
+  #   }
+  #   pmating <-  (1 - exp ( - theta * m_per_patch[popXY] )) 
+  #   pmating <- pmating * popsurvival # removing the females that didn't survive the competition earlier
+  #   pmating[is.na(pmating)] <- 0 # otherwise rbinom errors over the NA, see if can't code them as 0 from the start
+  # }
+
   
   # selfer <- coordalive %in% colnames(m_per_patch)[m_per_patch==0]
   # selfer <- selfer
   
   # Only females get a 1 or 0 (so the vector is the size of the female pop), and males are picked by females randomly; saves some random draw for the males
   realized_mating <- mapply( FUN = rbinom, prob = pmating[ sex =="fem" & repro == "s" ], size = 1, n = 1 ) 
+  
   if( sum(realized_mating) == 0 ) return( 'nomating')
   
   # coordinates of the sexual mothers
@@ -56,26 +61,26 @@ meetic <- function( sex,
   # total number of sexually + asexually produced offspring
   newpopsize <- fec * sum( realized_mating ) + fecasex * sum( repro == 'a' & popsurvival == 1 )
   
-  # each sexual female chooses one mate on her patch
-  potential_dads <-lapply( X = unique(popXY[which( popsurvival == 1 & sex == "mal" )]), 
-                           FUN = function(x) which( popXY[ which( popsurvival == 1 & sex == "mal" )] == x ) )
-  names(potential_dads) <-  unique(popXY[which( popsurvival == 1 & sex == "mal" )])
   
-  dad_id <- unlist(lapply( X = mum_patch,
-                           FUN = function(x) sample(potential_dads[[which(names(potential_dads)== x)]], 1) ))
-  
+  # for each sexual mother, picks a partner randomly among those on her patch
+  male_patch <- popXY[popsurvival == 1 & sex == "mal" ]
+  dad_id <- sapply( X = mum_patch,
+                   FUN = function(x) sample( which( male_patch == x ), 1 ))
+ 
   # genotypes of babies produced sexually
   mumgenes <- popgenome[ sex=="fem" & repro == "s" , , drop = F][ realized_mating == 1 , , drop = F ]
   dadgenes <- popgenome[ dad_id, ]
   mendel_parents <- mumgenes + dadgenes 
   mendel <- mendel_parents[rep(1:nrow(mendel_parents), times = fec), ]
-  
+
   mendel0 <- mendel == 0
   mendel4 <- mendel == 4
   mendel1 <- mendel == 1
   mendel3 <- mendel == 3
   mendel2 <- mendel == 2
   mendelmom <- mumgenes[rep(1:nrow(mumgenes), times = fec), ] == 1
+  
+
   
   # REMARK: ( 1 baby per female ), fec times ; NOT ( fec baby ), nb of female times
   sex_babygenome <- matrix( nrow = nrow(mendel) , ncol = (G ))
@@ -116,6 +121,10 @@ meetic <- function( sex,
   babyX <- c( rep( popX[ sex=="fem" & repro=="s"][ realized_mating ==1], fec ), rep( popX[ repro == "a" & popsurvival == 1 ], fecasex ) )
   babyY <- c( rep( popY[ sex=="fem" & repro=="s"][ realized_mating ==1], fec ), rep( popY[ repro == "a" & popsurvival == 1 ], fecasex ) )
 
+  
+
+  
+  
   return( list( babysex = babysex, babyX = babyX, babyY = babyY, 
                 babygenome = babygenome, babyrepro = babyrepro, 
                 babycloneline = babycloneline, babyclonalorigin = babyclonalorigin ) )
