@@ -199,7 +199,7 @@ master <- function( K,
     INVASION_sex[ t ] <- sum( popcloneline == 0 )
     
     xmax_t <- max( newbabyX ) # the furthest point the pop reaches
-    while( EDGE_t[t] == 0 ){ # selects as EDGE the farthest point when every one of the Y patches is colonized
+    while( EDGE_t[t] == 0 & xmax_t > 0){ # selects as EDGE the farthest point when every one of the Y patches is colonized
       if( length( unique( popY[ popsurvival == 1 ][ popX[ popsurvival == 1] == xmax_t ] )) == Ydim ){
         EDGE_t[t] <- xmax_t
       } 
