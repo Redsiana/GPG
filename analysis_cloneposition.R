@@ -74,7 +74,7 @@ analysis_cloneposition <- function(popcloneline,
   ggplot(data=df, aes(x=x, y=y, fill=fac, order=fac)) +
     geom_bar(stat="identity") +   theme_minimal() +
     scale_x_continuous(limits=c(0,200)) +
-    scale_y_continuous(limits=c(0,600)) +
+    scale_y_continuous() +
     scale_fill_manual(values= mypalette, labels = labels_plot) +
     geom_vline(xintercept = jitter(x_emergence), col=mypalette[2:(length(main_clones_names)+1)], size = .8 )+
     ggtitle(paste("pop composition after", t, "generations")) +
