@@ -29,7 +29,9 @@ diaspora <- function( newbabyX,
   newpopX[ newpopX > (Xdim-1) ] <- 2*(Xdim-1) - newpopX[ newpopX > (Xdim-1) ] # bouncing at (Xdim-1)
   
   newpopY[ newpopY > (Ydim-1) ] <- newpopY[ newpopY > (Ydim-1) ] - Ydim # if too far North, comes back South
+  newpopY[ newpopY > (Ydim-1) ] <- newpopY[ newpopY > (Ydim-1) ] - Ydim # x2 in case loong dispersal, and goes twice around
   newpopY[ newpopY < 0 ] <- newpopY[ newpopY < 0 ] + Ydim # if too far South, comes back North
+  newpopY[ newpopY < 0 ] <- newpopY[ newpopY < 0 ] + Ydim # x2 in case looong dispersal
   
   ## do they end up in a patch without potential mating partners?
   newpopXY <- paste( newpopX,newpopY,sep="," )
