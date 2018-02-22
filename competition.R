@@ -39,21 +39,29 @@ competition <- function( compet, coordalive, haspartner, popgenome, G , K){
     
     if( sum(haspartner) == 0) {
       popsurvival <- "extinction"
-      break }
-    popsurvival <- numeric( length(haspartner) )
-    popsurvival[ haspartner==T ] <- mapply( FUN = rbinom, prob = popfitness_haspartner, size = 1, n = 1)
+    } else {
+      popsurvival <- numeric( length(haspartner) )
+      popsurvival[ haspartner==T ] <- mapply( FUN = rbinom, prob = popfitness_haspartner, size = 1, n = 1)
+      }
+    
     
     return(popsurvival)
   }
   
   if(compet=='_fc_'){
     
-    pop_patch <- table( coordalive )
-    popfitness <- K / pop_patch[ coordalive ]
-    popfitness[ popfitness > 1 ] <- 1
-    condition <- !is.na( popfitness )
-    popsurvival <- rep( 0, length(coordalive) )
-    popsurvival[ condition ] <- mapply( FUN = rbinom, prob = popfitness[ condition ], size = 1, n = 1)
+    if( sum(haspartner) == 0) {
+      popsurvival <- "extinction"
+    } else {
+      pop_patch <- table( coordalive )
+      popfitness <- K / pop_patch[ coordalive ]
+      popfitness[ popfitness > 1 ] <- 1
+      condition <- !is.na( popfitness )
+      popsurvival <- rep( 0, length(coordalive) )
+      popsurvival[ condition ] <- mapply( FUN = rbinom, prob = popfitness[ condition ], size = 1, n = 1)
+    }
+    
+    
     
     return( popsurvival )
   }

@@ -39,16 +39,20 @@ stillborn <- function( babygenome,
   newbabyclonalorigin <- babyclonalorigin[ babysurvival, ]
   
   nmutants <- rbinom(n = 1, size = sum( newbabysex == "fem" & newbabyrepro == "s" ), prob = pmut)
-  idmutants <- sample( 1: sum( newbabysex == "fem" & newbabyrepro == "s" ), nmutants)
-  idline <- seq((count + 1), (count + nmutants))
-  idXorigin <- newbabyX[ newbabysex == 'fem' & newbabyrepro == "s"][ idmutants ]
-  idtime <- rep(t, length(idmutants))
+  if(nmutants > 0){
+    idmutants <- sample( 1: sum( newbabysex == "fem" & newbabyrepro == "s" ), nmutants)
+    idline <- seq((count + 1), (count + nmutants))
+    idXorigin <- newbabyX[ newbabysex == 'fem' & newbabyrepro == "s"][ idmutants ]
+    idtime <- rep(t, length(idmutants))
+    
+    newbabycloneline[ newbabysex == 'fem' & newbabyrepro == "s"][ idmutants ] <- idline
+    newbabyclonalorigin[ newbabysex == 'fem' & newbabyrepro == "s" ,][ idmutants, 1 ] <- idXorigin
+    newbabyclonalorigin[ newbabysex == 'fem' & newbabyrepro == "s" ,][ idmutants, 2 ] <- idtime
+    newbabyrepro[ newbabysex == 'fem' & newbabyrepro == "s"][ idmutants ] <- "a"
+  } 
   count <- count + nmutants
   
-  newbabycloneline[ newbabysex == 'fem' & newbabyrepro == "s"][ idmutants ] <- idline
-  newbabyclonalorigin[ newbabysex == 'fem' & newbabyrepro == "s" ,][ idmutants, 1 ] <- idXorigin
-  newbabyclonalorigin[ newbabysex == 'fem' & newbabyrepro == "s" ,][ idmutants, 2 ] <- idtime
-  newbabyrepro[ newbabysex == 'fem' & newbabyrepro == "s"][ idmutants ] <- "a"
+
   
   return( list( newbabygenome = newbabygenome, newbabysex = newbabysex, 
                 newbabyX = newbabyX, newbabyY = newbabyY, 

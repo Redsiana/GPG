@@ -57,19 +57,28 @@ analysis_cloneposition <- function(popcloneline,
   
   # catching colors used for clones before, so they don't change
   # gives new color to new clones, rotates only within the 11 colors of the palette
-  for(i in 1:length(main_clones_names)){ 
-    if( main_clones_names[i] %in% old_clones_names ){
-      main_clones_colors[i] <- old_clones_colors[old_clones_names==main_clones_names[i]]
-    } else {
-      main_clones_colors[i] <- pool_colors[count_col]
-      count_col <- count_col + 1
-      if(count_col>11) count_col <- 1
+  if(length(main_clones_names) != 0){
+    for(i in 1:length(main_clones_names)){ 
+      if( main_clones_names[i] %in% old_clones_names ){
+        main_clones_colors[i] <- old_clones_colors[old_clones_names==main_clones_names[i]]
+      } else {
+        main_clones_colors[i] <- pool_colors[count_col]
+        count_col <- count_col + 1
+        if(count_col>11) count_col <- 1
+      }
     }
   }
- 
-  mypalette <- c("lightgrey", main_clones_colors, "black")
   
-  labels_plot <- c("other cl", label_clone, "sex")
+ if(length(main_clones_colors)!=0){
+   mypalette <- c("lightgrey", main_clones_colors, "black")
+   labels_plot <- c("other cl", label_clone, "sex")
+ } else{
+   mypalette <- "black"
+   labels_plot <- "sex"
+ }
+  
+  
+  
   
   ggplot(data=df, aes(x=x, y=y, fill=fac, order=fac)) +
     geom_bar(stat="identity") +   theme_minimal() +
