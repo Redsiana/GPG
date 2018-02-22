@@ -109,7 +109,7 @@ master <- function( K,
                                 coordalive = coordalive, 
                                 popgenome = popgenome, K = K, G = G)
     
-
+    if(popsurvival=="extinction") break
 
     
     

@@ -36,6 +36,10 @@ competition <- function( compet, coordalive, haspartner, popgenome, G , K){
     popfitness_haspartner <- popfitness_haspartner / (2*G) # the survival probability resulting from resource acquisition, of each individual with reproductive prospects
     
     # each individual of the population now stochastically survives (1) or not (0). Without reproductive prospects, the individual dies.
+    
+    if( sum(haspartner) == 0) {
+      popsurvival <- "extinction"
+      break }
     popsurvival <- numeric( length(haspartner) )
     popsurvival[ haspartner==T ] <- mapply( FUN = rbinom, prob = popfitness_haspartner, size = 1, n = 1)
     
