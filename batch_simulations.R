@@ -63,8 +63,9 @@ dir.create( file.path( mainDir, subDir ), showWarnings = FALSE)
 
 setwd( file.path( mainDir, subDir ) )
 
+.start = 1
 
-for ( .run in 1:.n ) {
+for ( .run in .start:.n ) {
   
   compet <- .results$compet[.run]
   K  <- .results$K[.run]
@@ -78,7 +79,7 @@ for ( .run in 1:.n ) {
   c <- .results$c[.run]
 
   
-  if(.run == 1){
+  if(.run == .start){
     a <- mean_distance / ( gamma( 2/c ) / gamma( 1/c ) )
     
     nsamples <- 1E5
@@ -117,9 +118,12 @@ for ( .run in 1:.n ) {
       }
   }
   
+  plot = .plot
   seed = sample(1:1000, 1)
   set.seed(seed)
-  res <- master(K = K, 
+  res <- master(c = c,
+          mean_distance = mean_distance,
+          K = K, 
           fec = fec, 
           fecasex = fecasex,
           G = G, 
@@ -140,7 +144,7 @@ for ( .run in 1:.n ) {
   .results[.run, 22] <- seed
   
   rm(list = setdiff(ls(), lsf.str()))
-  write.table(.results, "results.txt")
+  write.table(.results, "results_1-200.txt")
   
   }
 

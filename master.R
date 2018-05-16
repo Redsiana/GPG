@@ -1,4 +1,6 @@
-master <- function( K, 
+master <- function( c,
+                    mean_distance,
+                    K,
                     fec,
                     fecasex,
                     G,
@@ -21,10 +23,14 @@ master <- function( K,
   {
 
   
-  namerun <- paste( compet, "K", K, '_fs', fec, '_fa',
+  namerun1 <- paste( compet, "K", K, '_fs', fec, '_fa',
                     fecasex, '_', probamating,'_G', G, '_b',
-                    bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'.RData',
+                    bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'T1.RData',
                     sep = "" )
+  namerun2 <- paste( compet, "K", K, '_fs', fec, '_fa',
+                     fecasex, '_', probamating,'_G', G, '_b',
+                     bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'T2.RData',
+                     sep = "" )
   
   # gc() # clean unused memory
   # ani.record(reset = TRUE) # reset plot memory
@@ -36,11 +42,14 @@ master <- function( K,
   
   # preparing data gathering
   
-  INVASION_tot <- numeric( length = tps ) # pop size gathered once adults have settled and survived competition, before reproduction
-  INVASION_sex <- numeric( length = tps )
-  EDGE_t <- numeric( length = tps ) # position of the pop edge in time (defined as the X coordinates where all Y patches contain individuals)
-  EDGE_sex_t <- numeric( length = tps)
-  pureness_sex_t <- numeric( length = tps)
+  INVASION_tot <- numeric( length = 1 ) # pop size gathered once adults have settled and survived competition, before reproduction
+  INVASION_sex <- numeric( length = 1 )
+  EDGE_t <- NA # position of the pop edge in time (defined as the X coordinates where all Y patches contain individuals)
+  EDGE_sex_t <- numeric( length = 1)
+  pureness_sex_t <- numeric( length = 1)
+  
+  t_full_corridor <- numeric() # the time at which the entire pop reaches the end of the corridor (all patches full)
+  notfull_boolean <- T # to detect only the first generation at which it gets full
   
   # Initialization
   
@@ -76,9 +85,12 @@ master <- function( K,
   old_clones_colors = NA
   old_clones_names = NA
   
+  # give some random super high limit, but will be lowered when T2 is calculated (as twice the time it took to fill the corridor)
+  T2 <- 10000
+  t <- 1
   ######### --- enter loop --- ########
   
-  for ( t in 1: tps ){
+  while ( t < T2 ){
     bug = 0
     
     # 0. Initial dispersal
@@ -109,7 +121,7 @@ master <- function( K,
                                 coordalive = coordalive, 
                                 popgenome = popgenome, K = K, G = G)
     
-    if(popsurvival=="extinction") break
+    if(is.character(popsurvival)) break
 
     
     
@@ -181,7 +193,7 @@ master <- function( K,
       TEMP <- analysis_cloneposition( popcloneline = popcloneline, 
                               popclonalorigin = popclonalorigin, 
                               newbabyX = newbabyX, 
-                              namerun = namerun, 
+                              namerun = namerun2, 
                               t = t,
                               old_clones_names = old_clones_names,
                               old_clones_colors = old_clones_colors,
@@ -199,7 +211,7 @@ master <- function( K,
     INVASION_sex[ t ] <- sum( popcloneline == 0 )
     
     xmax_t <- max( newbabyX ) # the furthest point the pop reaches
-    while( EDGE_t[t] == 0 & xmax_t > 0){ # selects as EDGE the farthest point when every one of the Y patches is colonized
+    while( is.na( EDGE_t[t]) & xmax_t > 0){ # selects as EDGE the farthest point when every one of the Y patches is colonized
       if( length( unique( popY[ popsurvival == 1 ][ popX[ popsurvival == 1] == xmax_t ] )) == Ydim ){
         EDGE_t[t] <- xmax_t
       } 
@@ -213,7 +225,15 @@ master <- function( K,
     pureness_sex_t[t] <- sum( newbabyX[popcloneline == 0 ] <= EDGE_sex_t[t] ) / 
       sum( newbabyX <= EDGE_sex_t[t] )
 
-    
+    # when the population reaches the end of the corridor
+    if( notfull_boolean ){
+      if( EDGE_t == (Xdim-1) ){
+      T1 <- t
+      save( list = ls( all.names = TRUE ), file = namerun1, envir = environment() )
+      T2 <- 2*T1
+      notfull_boolean <- FALSE
+      }
+    }
     
     
     # Limit cases
@@ -224,7 +244,7 @@ master <- function( K,
     if( sum( repro == "s" ) / sum( repro == "a") < 0.05 ){
       break
     }
-    if( EDGE_sex_t[t] == Xdim ) break
+    # if( EDGE_sex_t[t] == Xdim ) break
     
     ######### --- loop --- ########
     
@@ -233,13 +253,13 @@ master <- function( K,
     print( paste( run, ':', t ) )
     
     
-    
+    t <- t+1
     
   }
   
   res <- c(max(EDGE_sex_t), #                                 max X position attained by sexuals
            max( which(EDGE_sex_t==max(EDGE_sex_t))), #        time when they attained it
-           pureness_sex_t[ mean(c( max(EDGE_sex_t), t)) ], #  pureness halfway between recession point and end simulation
+           pureness_sex_t[ mean(c( max( which(EDGE_sex_t==max(EDGE_sex_t))), t)) ], #  pureness halfway between recession point and end simulation
            max(INVASION_sex), #                               max number of sexuals attained in the pop
            max( which(INVASION_sex==max(INVASION_sex))), #    time when they attain it
            INVASION_tot[t], #                                 how many individuals when simulation ended
@@ -257,14 +277,14 @@ master <- function( K,
   #                   sep = "" )
  # backup <- paste( 'C:/Users/Anais Tilquin/Desktop/SimulLaCiotat/', namerun, sep = "" )
 
- save( list = ls( all.names = TRUE ), file = namerun, envir = environment() )
+ save( list = ls( all.names = TRUE ), file = namerun2, envir = environment() )
  # save( list = ls( all.names = TRUE ), file = backup, envir = environment() )
   
  
  analysis_cloneposition( popcloneline = popcloneline, 
                          popclonalorigin = popclonalorigin, 
                          newbabyX = newbabyX, 
-                         namerun = namerun, 
+                         namerun = namerun2, 
                          t = t,
                          old_clones_names = old_clones_names,
                          old_clones_colors = old_clones_colors,

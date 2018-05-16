@@ -58,23 +58,36 @@
 .Xdim <- Xdim <- 200
 .Ydim <- Ydim <- 10
 
-.seed = 42
+# .seed = 42
+.seed = 66
 set.seed(.seed)
-.n <- 500
+.n <- 200
+vbsline <- c( rep( 1, (2*.n) ), rep( 0.5, (2*.n) ) )
+vcompet <- c( rep('_ded_', .n), rep('_fc_', .n), rep('_ded_', .n), rep('_fc_', .n))
+
 vK <- sample( 5:40, .n, replace=T)
-vfec <- sample( 3:10, .n, replace=T)
-vdisadvantage <- sample( seq( 0.2, 0.8, 0.1 ), .n, replace = T)
+vK <- rep(vK, 4)
+vfec <- sample( c(4,6,8,10,12), .n, replace=T)
+vfec <- rep(vfec, 4)
+vdisadvantage <- rep(.5, .n)
+vdisadvantage <- rep(vdisadvantage, 4)
 vfecasex <- round(vdisadvantage * vfec)
 vfecasex[vfecasex==1] <- 2
 vG <- sample( 2:20, .n, replace=T)
-vprobamating <- rep( 1, .n )
-vbsline <- sample( seq( 0.2,1, 0.1 ), .n, replace=T)
-vpmut <- sample( c( 0.005, 0.0005, 0.00005 ), .n, replace=T)
-vcompet <- sample(c( "_ded_", "_fc_" ), .n, replace = T)
-vmean_distance <- sample( seq(0.5,3,0.1), .n, replace = T) 
-vc <- sample( c(0.5, 0.8, 1, 1.2, 5), .n, replace = T)
+vG <- rep(vG, 4)
+vprobamating <- rep( 1, (4*.n) )
 
-results <- data.frame(matrix(NA, nrow = .n, ncol = 22))
+# bsline = 0.2
+# curve(expr=1-(1-bsline)*((x-1))^2, from=0, to=1)
+vpmut <- sample( c( 0.005, 0.0005, 0.00005 ), .n, replace=T)
+vpmut <- rep(vpmut, 4)
+# vcompet <- sample(c( "_ded_", "_fc_" ), .n, replace = T)
+vmean_distance <- sample( seq(0.5,3,0.1), .n, replace = T) 
+vmean_distance <- rep( vmean_distance, 4)
+vc <- sample( c(0.5, 0.8, 1, 1.2, 5), .n, replace = T)
+vc <- rep(vc, 4)
+
+results <- data.frame(matrix(NA, nrow = (4*.n), ncol = 22))
 colnames(results) <- c('compet',
                        'K',
                        'fs',
@@ -99,9 +112,10 @@ colnames(results) <- c('compet',
                        'seed')
 
 results[,2:11] <- cbind( vK, vfec, vfecasex, vprobamating, vG, vbsline,
-                        vpmut, vmean_distance, vc, 1:.n)
+                        vpmut, vmean_distance, vc, 1:(.n*4))
 results[,1] <- vcompet
 .results <- results[
   with(results, order(vmean_distance, vc)),
   ]
 
+write.table(results, "parameters.txt", col.names = T)
