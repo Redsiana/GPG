@@ -19,7 +19,7 @@ analysis_cloneposition <- function(popcloneline,
                                    EDGE_t){
   
   sorted_clone_prevalence <- sort( table(popcloneline)[-1]) # gives table with clone number and number of individuals (without sexuals)
-  main_clones_names <- sort( as.numeric( names( tail(sorted_clone_prevalence, 5) )) )
+  main_clones_names <- sort( as.numeric( names( tail(sorted_clone_prevalence, 5) )) ) # gives the 5 most numerous clones
   
   clone_bars <- as.numeric( table(newbabyX[ !(popcloneline %in% c(0,main_clones_names)) ]) ) # clones that are not the main ones
   clone_patches <- as.numeric( names( table(newbabyX[ !(popcloneline %in% c(0,main_clones_names)) ])) )
@@ -70,8 +70,14 @@ analysis_cloneposition <- function(popcloneline,
   }
   
  if(length(main_clones_colors)!=0){
-   mypalette <- c("lightgrey", main_clones_colors, "black")
-   labels_plot <- c("other cl", label_clone, "sex")
+   if(sum( df[,3]=="other cl")==0){
+     mypalette <- c( main_clones_colors, "black")
+     labels_plot <- c( label_clone, "sex")
+   } else{
+     mypalette <- c("lightgrey", main_clones_colors, "black")
+     labels_plot <- c("other cl", label_clone, "sex")
+   }
+   
  } else{
    mypalette <- "black"
    labels_plot <- "sex"

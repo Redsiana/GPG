@@ -52,6 +52,8 @@
 ####################### for batch
 .plot <- F
 
+.control <- F
+
 .tps = 1000
 .Xinit <- Xinit <- 10
 .Yinit <- Yinit <- 10
@@ -87,7 +89,7 @@ vmean_distance <- rep( vmean_distance, 4)
 vc <- sample( c(0.5, 0.8, 1, 1.2, 5), .n, replace = T)
 vc <- rep(vc, 4)
 
-results <- data.frame(matrix(NA, nrow = (4*.n), ncol = 22))
+results <- data.frame(matrix(NA, nrow = (4*.n), ncol = 23))
 colnames(results) <- c('compet',
                        'K',
                        'fs',
@@ -109,7 +111,9 @@ colnames(results) <- c('compet',
                        'X.all.end',
                        'X.sex.end',
                        'end.t',
-                       'seed')
+                       'namerun',
+                       'seed'
+                       )
 
 results[,2:11] <- cbind( vK, vfec, vfecasex, vprobamating, vG, vbsline,
                         vpmut, vmean_distance, vc, 1:(.n*4))

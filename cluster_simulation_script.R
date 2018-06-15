@@ -72,7 +72,9 @@ for ( .run in 1: .nsimul )
           M = .vM[run],
           pmut = .vpmut[run],
           tps = .tps,
-          run = run ) 
+          run = run,
+	  control = .control,
+	  mixis = .mixis ) 
   print(run)
 }
 

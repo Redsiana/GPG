@@ -18,18 +18,21 @@ master <- function( c,
                     tps, 
                     run,
                     compet,
-                    plot
+                    plot,
+                    control,
+                    autonomous,
+                    asexmixis
                     )
   {
 
   
   namerun1 <- paste( compet, "K", K, '_fs', fec, '_fa',
                     fecasex, '_', probamating,'_G', G, '_b',
-                    bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'T1.RData',
+                    bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'_T1.RData',
                     sep = "" )
   namerun2 <- paste( compet, "K", K, '_fs', fec, '_fa',
                      fecasex, '_', probamating,'_G', G, '_b',
-                     bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'T2.RData',
+                     bsline, '_pm', pmut, '_d', mean_distance, '_c', c, '_',run,'_T2.RData',
                      sep = "" )
   
   # gc() # clean unused memory
@@ -138,7 +141,10 @@ master <- function( c,
                     fecasex = fecasex, popgenome = popgenome, 
                     popsurvival = popsurvival, repro = repro, popXY = popXY, 
                     popX = popX, popY = popY, G = G, popcloneline = popcloneline,
-                    popclonalorigin = popclonalorigin )
+                    popclonalorigin = popclonalorigin,
+                    control = control, 
+                    asexmixis = asexmixis,
+                    autonomous = autonomous)
     
     if( !is.list( TEMP )) break
     
@@ -162,7 +168,7 @@ master <- function( c,
                        babyX = babyX, babyY = babyY,  
                        bsline = bsline, pmut = pmut, babyrepro = babyrepro, 
                        babycloneline = babycloneline, babyclonalorigin = babyclonalorigin,
-                       count = count, G = G, t = t)
+                       count = count, G = G, t = t, control = control)
     
     sex <- TEMP$newbabysex
     popgenome <- as.matrix( TEMP$newbabygenome, drop = FALSE )
@@ -177,33 +183,7 @@ master <- function( c,
     bug = 4
     
     
-    # Plot density of total, and asexual populations.
-    
-    if ( plot == TRUE & round( t/10 ) == t/10 ){
-    
-    # popsize <- tapply( popsurvival, coordalive, sum )
-    # asexpopsize <- tapply( popsurvival[ repro == "a"], coordalive[ repro == "a"], sum )
-    # dev.control('enable')
-    # print( plotdensity( K = K, Xinit = Xinit, Xdim = Xdim, Ydim = Ydim,
-    #                     popsize = popsize, asexpopsize = asexpopsize,
-    #                     popX = popX, popY = popY, popXY = popXY,
-    #                     plotname = 'Density per patch' ) )
-    # ani.record()
-    # 
-      TEMP <- analysis_cloneposition( popcloneline = popcloneline, 
-                              popclonalorigin = popclonalorigin, 
-                              newbabyX = newbabyX, 
-                              namerun = namerun2, 
-                              t = t,
-                              old_clones_names = old_clones_names,
-                              old_clones_colors = old_clones_colors,
-                              count_col = count_col, 
-                              EDGE_t = EDGE_t)
-      
-      count_col <- TEMP$count_col
-      old_clones_colors <- TEMP$main_clones_colors
-      old_clones_names <- TEMP$main_clones_names
-    }
+
     
     
     # numer of individuals of either types
@@ -225,16 +205,58 @@ master <- function( c,
     pureness_sex_t[t] <- sum( newbabyX[popcloneline == 0 ] <= EDGE_sex_t[t] ) / 
       sum( newbabyX <= EDGE_sex_t[t] )
 
+    
+    # Plot density of total, and asexual populations.
+    
+    if ( plot == TRUE & round( t/10 ) == t/10 ){
+      
+      # popsize <- tapply( popsurvival, coordalive, sum )
+      # asexpopsize <- tapply( popsurvival[ repro == "a"], coordalive[ repro == "a"], sum )
+      # dev.control('enable')
+      # print( plotdensity( K = K, Xinit = Xinit, Xdim = Xdim, Ydim = Ydim,
+      #                     popsize = popsize, asexpopsize = asexpopsize,
+      #                     popX = popX, popY = popY, popXY = popXY,
+      #                     plotname = 'Density per patch' ) )
+      # ani.record()
+      # 
+      TEMP <- analysis_cloneposition( popcloneline = popcloneline, 
+                                      popclonalorigin = popclonalorigin, 
+                                      newbabyX = newbabyX, 
+                                      namerun = namerun2, 
+                                      t = t,
+                                      old_clones_names = old_clones_names,
+                                      old_clones_colors = old_clones_colors,
+                                      count_col = count_col, 
+                                      EDGE_t = EDGE_t)
+      
+      count_col <- TEMP$count_col
+      old_clones_colors <- TEMP$main_clones_colors
+      old_clones_names <- TEMP$main_clones_names
+    }
+    
+    
     # when the population reaches the end of the corridor
     if( notfull_boolean ){
-      if( EDGE_t == (Xdim-1) ){
+      if( EDGE_t[t] == (Xdim-1) ){
       T1 <- t
       save( list = ls( all.names = TRUE ), file = namerun1, envir = environment() )
       T2 <- 2*T1
       notfull_boolean <- FALSE
+      
+      analysis_cloneposition( popcloneline = popcloneline, 
+                              popclonalorigin = popclonalorigin, 
+                              newbabyX = newbabyX, 
+                              namerun = namerun1, 
+                              t = t,
+                              old_clones_names = old_clones_names,
+                              old_clones_colors = old_clones_colors,
+                              count_col = count_col,
+                              EDGE_t = EDGE_t)
+      
       }
     }
     
+    t <- t+1
     
     # Limit cases
     if( length( popXY ) == 0 | sum ( is.na(coordalive) ) == length(coordalive) ){
@@ -252,9 +274,6 @@ master <- function( c,
     
     print( paste( run, ':', t ) )
     
-    
-    t <- t+1
-    
   }
   
   res <- c(max(EDGE_sex_t), #                                 max X position attained by sexuals
@@ -262,11 +281,12 @@ master <- function( c,
            pureness_sex_t[ mean(c( max( which(EDGE_sex_t==max(EDGE_sex_t))), t)) ], #  pureness halfway between recession point and end simulation
            max(INVASION_sex), #                               max number of sexuals attained in the pop
            max( which(INVASION_sex==max(INVASION_sex))), #    time when they attain it
-           INVASION_tot[t], #                                 how many individuals when simulation ended
-           INVASION_sex[t], #                                 how many sexuals when simulation ended
-           EDGE_t[t], #                                       how far the entire pop was when simulation ended
-           EDGE_sex_t[t], #                                   how far the sexual pop was when simulation ended
-           t #                                                when the simulation ended
+           INVASION_tot[t-1], #                                 how many individuals when simulation ended
+           INVASION_sex[t-1], #                                 how many sexuals when simulation ended
+           EDGE_t[t-1], #                                       how far the entire pop was when simulation ended
+           EDGE_sex_t[t-1], #                                   how far the sexual pop was when simulation ended
+           (t-1), #                                             when the simulation ended
+           namerun2
            )
   
   
@@ -285,7 +305,7 @@ master <- function( c,
                          popclonalorigin = popclonalorigin, 
                          newbabyX = newbabyX, 
                          namerun = namerun2, 
-                         t = t,
+                         t = (t-1),
                          old_clones_names = old_clones_names,
                          old_clones_colors = old_clones_colors,
                          count_col = count_col,
