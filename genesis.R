@@ -20,7 +20,7 @@ genesis <- function(K,
   sex <- c( rep( "fem", each = ceiling( Sinit * (Ninit/2) )),
             rep( "mal", each= floor( Sinit * (Ninit/2) )))   
   sex <- sample(sex)
-  repro <- rep("s", Sinit*Ninit)
+  repro <- rep("s", Xinit*Ninit)
   newbabyX <- rep( 0:(Xinit-1), (Yinit*Ninit) )
   newbabyY <- rep( 0:(Yinit-1), each = (Xinit*Ninit) )
   
