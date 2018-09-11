@@ -1,0 +1,7 @@
+library(lattice)
+levelplot(t(htz_matrix[1:t,]), main = "average heterozygosity")
+levelplot(t(diversity_matrix[1:t,]), main = "genetic diversity")
+levelplot(t(sex_matrix[1:t,]), main = "frequency of sexuals")
+plot(INVASION_tot)
+points(INVASION_tot-INVASION_sex, col="blue")
+points(INVASION_sex, col="red")
