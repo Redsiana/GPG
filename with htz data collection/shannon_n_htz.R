@@ -2,7 +2,7 @@
   analysis_shannon <- function( newbabyX = newbabyX,
                     newbabyY = newbabyY,
                     popgenome = popgenome,
-                    G = G){
+                    G = G, Xdim = Xdim ){
     #### PHENOTYPIC DIVERSITY -> Shannon index based on RESOURCE CONSUMPTION
     # some kind of shannon index based on the resource consumed. Of the total resource consumed, 
     # how much was eaten of each category of the 2*G. Pop of total heteroz would consume 1/2G of each.
@@ -36,12 +36,11 @@
     
     shannon_function = function(x) {
       ## BEWARE this is not a true Shannon Index. The normalizing factor is if
-      ## all individuals on the patch were different, which is not always 
-      ## evn possible if G is low
-      ( - sum( ( table(x) / length(x) ) * log2 ( table(x) / length(x) ) ) ) / log2( length(x) )
+      ## all individuals on the patch were different, or if all possible genotypes are represented
+      ( - sum( ( table(x) / length(x) ) * log2 ( table(x) / length(x) ) ) ) / min( log2( length(x) ), log2( 3^G ) )
     }
     
-    genome <- apply(popgenome, 1, paste, collapse="")
+    genome <- apply(popgenome, 1, paste, collapse="") # collapses loci in 1 string
     shannon_per_patch <- tapply( genome, newbabyXY, shannon_function )
     shannon_per_X <- tapply( shannon_per_patch, X_position, mean )
     res_shannon <- rep(NA, Xdim)
@@ -58,7 +57,7 @@
 
   analysis_htz <- function( popgenome = popgenome,
                             G = G,
-                            newbabyX = newbabyX){
+                            newbabyX = newbabyX, Xdim = Xdim){
     # Ahtz <- rowSums( popgenome[ popcloneline == 0, ] ==1 )/G
     # Shtz <- rowSums( popgenome[ popcloneline != 0, ] ==1 )/G
     Thtz <- rowSums( popgenome ==1 )/G
