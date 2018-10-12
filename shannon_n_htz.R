@@ -1,3 +1,4 @@
+
   # -----------
   analysis_shannon <- function( newbabyX = newbabyX,
                     newbabyY = newbabyY,
@@ -75,5 +76,3 @@
   library(compiler)
   analysis_shannon <- cmpfun(analysis_shannon)
   analysis_htz <- cmpfun(analysis_htz)
-
-
