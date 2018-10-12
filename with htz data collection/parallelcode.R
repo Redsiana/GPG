@@ -53,6 +53,7 @@
     mean_distance <- .results$mean_dist[run]
     c <- .results$c[run]
     control = .control
+niches = .niches
     
   
       a <- mean_distance / ( gamma( 2/c ) / gamma( 1/c ) )
@@ -97,7 +98,9 @@
                   autonomous = .autonomous,
                   control = .control,
                   hermaphrodite = .hermaphrodite,
-                  resident_selfer = .resident_selfer)
+                  resident_selfer = .resident_selfer,
+                  niches = .niches,
+                  facultative_parthenogen = .facultative_parthenogen)
     
     .results[run, 12:22] <- res
     .results[run, 23] <- seed
@@ -114,6 +117,6 @@
   parallelruns <- cmpfun(parallelruns)
 
   library(parallel)
-  mclapply(1:32, parallelruns, mc.cores= (detectCores()-1), mc.preschedule = F)
+  mclapply(1:800, parallelruns, mc.cores= (detectCores()-1), mc.preschedule = F)
   
   # lapply(201:800, parallelruns)

@@ -24,7 +24,8 @@ master <- function( c,
                     asexmixis,
                     hermaphrodite,
                     resident_selfer,
-                    niches
+                    niches,
+                    facultative_parthenogen
                     )
   {
 
@@ -129,7 +130,7 @@ master <- function( c,
                                 # haspartner = haspartner, 
                                 popXY = popXY, 
                                 popgenome = popgenome, K = K, G = G, 
-                                niches = niches)
+                                niches = .niches)
     
     if(is.character(popsurvival)) break
 
@@ -153,7 +154,8 @@ master <- function( c,
                     asexmixis = asexmixis,
                     autonomous = autonomous,
                     hermaphrodite = hermaphrodite, 
-                    resident_selfer = resident_selfer) 
+                    resident_selfer = resident_selfer,
+                    facultative_parthenogen = facultative_parthenogen) 
     
     if( !is.list( TEMP )) break
     
@@ -246,12 +248,12 @@ master <- function( c,
     diversity_matrix[t,] <- analysis_shannon( newbabyX = newbabyX,
                                               newbabyY = newbabyY,
                                               popgenome = popgenome,
-                                              G = G)
+                                              G = G, Xdim = Xdim )
     htz_matrix[t,] <- analysis_htz( popgenome = popgenome,
                                     G = G, 
-                                    newbabyX = newbabyX)
+                                    newbabyX = newbabyX, Xdim = Xdim)
     
-    analysis_sex <- tapply(babycloneline==0, newbabyX, sum ) / tapply(babycloneline, newbabyX, length )
+    analysis_sex <- tapply(popcloneline==0, newbabyX, sum ) / tapply(popcloneline, newbabyX, length )
     
     sex_matrix[t, as.numeric( names(analysis_sex)) + 1] <- analysis_sex
     

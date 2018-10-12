@@ -6,6 +6,7 @@
 .hermaphrodite <- T
 .resident_selfer <- F
 .niches <- 3
+.facultative_parthenogen <- F
 
 
 .tps = 1000
